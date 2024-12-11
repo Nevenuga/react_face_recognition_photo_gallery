@@ -1,0 +1,140 @@
+.image-uploader {
+    margin: 20px;
+}
+
+.upload-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.upload-button:hover {
+    background-color: #45a049;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.option-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.upload-option, .webcam-option {
+    padding: 15px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.upload-option:hover, .webcam-option:hover {
+    background-color: #45a049;
+}
+
+.webcam-container {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.webcam-video {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.capture-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.preview-container {
+    width: 100%;
+}
+
+.preview-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.preview-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.preview-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.preview-buttons button:nth-child(1) {
+    background-color: #2196F3;
+    color: white;
+}
+
+.preview-buttons button:nth-child(2) {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.preview-buttons button:nth-child(3) {
+    background-color: #f44336;
+    color: white;
+}
+
+.preview-buttons button:hover {
+    opacity: 0.9;
+}
