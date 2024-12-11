@@ -6,7 +6,7 @@ const path = require('path');
 const { Server } = require('socket.io');
 const photoRoutes = require('./routes/photos');
 const userImageRoutes = require('./routes/userImages');
-const { CLIENT_URL } = require('./server_config');
+const { CLIENT_URL, MONGODB_URL } = require('./server_config');
 
 
 const app = express();
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 
-mongoose.connect('mongodb://localhost:27017/photoGallery', {
+mongoose.connect(MONGODB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 });
