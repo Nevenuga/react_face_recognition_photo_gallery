@@ -6,7 +6,7 @@ const { CLIENT_URL } = require('../server_config');
 
 
 router.use(cors({
-    origin: CLIENT_URL,
+    origin: "*",
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type']
 }));
