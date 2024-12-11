@@ -6,7 +6,7 @@ const CONFIG = {
 
 const CLIENT_URL = `http://${CONFIG.SERVER_IP}:${CONFIG.CLIENT_PORT}`;
 const SERVER_URL = `http://${CONFIG.SERVER_IP}:${CONFIG.SERVER_PORT}`;
-const MONGODB_URL = `mongodb://mongodb:27017/photoGallery`;
+const MONGODB_URL = `mongodb://127.0.0.1:27017/photoGallery`;
 
 module.exports = {
     CONFIG,
