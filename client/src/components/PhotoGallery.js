@@ -13,7 +13,7 @@ const PhotoGallery = () => {
         fetchPhotos();
 
         socket.on('newPhoto', (newPhotos) => {
-            console.log('Received new photos:', newPhotos); // Отладочный вывод
+            console.log('Received new photos:', newPhotos);
             if (Array.isArray(newPhotos)) {
                 setPhotos(newPhotos);
             }
@@ -28,7 +28,7 @@ const PhotoGallery = () => {
         try {
             const response = await fetch(`${SERVER_URL}/api/photos`);
             const data = await response.json();
-            console.log('Fetched photos:', data); // Отладочный вывод
+            console.log('Fetched photos:', data);
             setPhotos(data);
         } catch (error) {
             console.error('Error fetching photos:', error);
@@ -44,7 +44,7 @@ const PhotoGallery = () => {
             {photos.length > 0 && (
                 <div 
                     key={photos[0]._id} 
-                    className="photo-container main-photo"
+                    className={`photo-container main-photo ${photos[0].matchFound ? 'match-found' : ''}`}
                     style={{ '--order': 0 }}
                 >
                     <img 
@@ -55,13 +55,15 @@ const PhotoGallery = () => {
                             e.target.src = getDefaultImage();
                         }}
                     />
-                    {photos[0].metadata && (
+                    {/* Временно убираем условие для проверки */}
+                    <div className="similarity-badge">
+                        {Math.round(photos[0].similarity)}%
+                    </div>
+                    {/* Отладочный вывод */}
+                    {console.log('Main photo data:', photos[0])}
+                    {photos[0].embedding && photos[0].embedding.length > 0 && (
                         <div className="heatmap-container">
-                            {typeof photos[0].metadata === 'string' ? (
-                                <HeatmapChart data={JSON.parse(photos[0].metadata)} />
-                            ) : (
-                                <HeatmapChart data={photos[0].metadata} />
-                            )}
+                            <HeatmapChart data={photos[0].embedding} />
                         </div>
                     )}
                 </div>

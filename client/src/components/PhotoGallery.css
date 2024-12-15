@@ -1,17 +1,35 @@
 .photo-gallery {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     gap: 20px;
     padding: 20px;
 }
 
 .photo-container {
+    position: relative;
     transition: all 1s ease;
     overflow: hidden;
     border: 3px solid black;
     border-radius: 8px;
     order: var(--order);
+}
+
+.photo-container.match-found {
+    border: 4px solid #4CAF50;  /* Зеленая рамка для совпадений */
+    animation: pulse 2s infinite;  /* Добавляем пульсацию */
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
 }
 
 .photo {
@@ -60,4 +78,19 @@
     text-align: center;
     font-family: monospace;
     z-index: 10;
+}
+
+.similarity-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(76, 175, 80, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 100; /* Добавляем высокий z-index */
+    pointer-events: none; /* Чтобы бейдж не мешал кликам */
 }

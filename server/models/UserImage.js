@@ -10,6 +10,12 @@ const userImageSchema = new mongoose.Schema({
         enum: ['webcam', 'upload'],
         required: true
     },
+    embedding: {
+        type: [Number],  // 512-мерный вектор
+        required: false,
+        default: null,
+        index: true  // для быстрого поиска
+    },
     createdAt: {
         type: Date,
         default: Date.now

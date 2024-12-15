@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const Photo = require('../models/Photo');
+const UserImage = require('../models/UserImage');
+const { cosineSimilarity } = require('../utils/embeddingUtils');
 
 router.get('/', async (req, res) => {
     try {
@@ -19,9 +21,29 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ message: 'No image data provided' });
         }
 
+        const embedding = Array.isArray(req.body.metadata) ? req.body.metadata : [];
+        console.log('Received embedding:', embedding.slice(0, 5), '...');
+        let matchFound = false;
+        let maxSimilarity = 0;
+        if (embedding.length > 0) {
+            const userImages = await UserImage.find({});
+            console.log('Found userImages:', userImages.length);
+            for (const userImage of userImages) {
+                if (userImage.embedding) {
+                    const similarity = cosineSimilarity(embedding, userImage.embedding);
+                    maxSimilarity = Math.max(maxSimilarity, similarity);
+                    if (similarity > 80) {
+                        matchFound = true;
+                    }
+                }
+            }
+        }
+
         const photo = new Photo({
             imageData: req.body.imageData,
-            metadata: req.body.metadata
+            embedding: embedding,
+            matchFound,
+            similarity: maxSimilarity
         });
 
         const newPhoto = await photo.save();
@@ -34,7 +56,9 @@ router.post('/', async (req, res) => {
         
         res.status(201).json({ 
             status: 'success',
-            id: newPhoto._id
+            id: newPhoto._id,
+            matchFound,
+            similarity: maxSimilarity
         });
     } catch (error) {
         console.error('Error saving photo:', error);

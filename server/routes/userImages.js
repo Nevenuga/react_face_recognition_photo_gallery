@@ -3,14 +3,13 @@ const router = express.Router();
 const UserImage = require('../models/UserImage');
 const cors = require('cors');
 const { CLIENT_URL } = require('../server_config');
-
+const { processImage } = require('../middleware/imageProcessing');
 
 router.use(cors({
     origin: CLIENT_URL,
     methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type']
 }));
-
 
 router.post('/upload-image', async (req, res) => {
     try {
@@ -20,31 +19,38 @@ router.post('/upload-image', async (req, res) => {
             return res.status(400).json({ message: 'No image data provided' });
         }
 
+        // Получаем эмбеддинг из Python
+        const { success, embedding, error } = await processImage(imageData);
+        
+        if (!success) {
+            console.error('Error processing image:', error);
+            // Даже если не удалось получить эмбеддинг, все равно сохраняем изображение
+        }
+
         const newImage = new UserImage({
             imageData,
-            type
+            type,
+            embedding: embedding || null
         });
 
         await newImage.save();
-
 
         const latestImages = await UserImage.find({}, '_id type createdAt')
             .sort({ createdAt: -1 })
             .limit(5);
 
-
         req.app.get('io').emit('newUserPhoto', latestImages);
 
         res.status(201).json({ 
             message: 'Image uploaded successfully',
-            imageId: newImage._id
+            imageId: newImage._id,
+            hasEmbedding: !!embedding
         });
     } catch (error) {
         console.error('Error uploading image:', error);
         res.status(500).json({ message: 'Error uploading image' });
     }
 });
-
 
 router.get('/images', async (req, res) => {
     try {
@@ -58,7 +64,6 @@ router.get('/images', async (req, res) => {
     }
 });
 
-
 router.get('/download/:id', async (req, res) => {
     try {
         const image = await UserImage.findById(req.params.id);
@@ -66,7 +71,6 @@ router.get('/download/:id', async (req, res) => {
         if (!image) {
             return res.status(404).json({ message: 'Image not found' });
         }
-
 
         const matches = image.imageData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
         
@@ -77,14 +81,12 @@ router.get('/download/:id', async (req, res) => {
         const contentType = matches[1];
         const imageBuffer = Buffer.from(matches[2], 'base64');
 
-
         let extension = 'jpg';
         if (contentType.includes('png')) {
             extension = 'png';
         } else if (contentType.includes('gif')) {
             extension = 'gif';
         }
-
 
         res.set({
             'Content-Type': contentType,
@@ -99,7 +101,6 @@ router.get('/download/:id', async (req, res) => {
     }
 });
 
-
 router.get('/view/:id', async (req, res) => {
     try {
         const image = await UserImage.findById(req.params.id);
@@ -107,7 +108,6 @@ router.get('/view/:id', async (req, res) => {
         if (!image) {
             return res.status(404).json({ message: 'Image not found' });
         }
-
 
         const matches = image.imageData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
         
@@ -117,7 +117,6 @@ router.get('/view/:id', async (req, res) => {
 
         const contentType = matches[1];
         const imageBuffer = Buffer.from(matches[2], 'base64');
-
 
         res.set({
             'Content-Type': contentType,
@@ -131,7 +130,6 @@ router.get('/view/:id', async (req, res) => {
     }
 });
 
-
 router.delete('/:id', async (req, res) => {
     try {
         const image = await UserImage.findByIdAndDelete(req.params.id);
@@ -139,11 +137,9 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).json({ message: 'Image not found' });
         }
 
-
         const latestImages = await UserImage.find({}, '_id type createdAt')
             .sort({ createdAt: -1 })
             .limit(5);
-
 
         req.app.get('io').emit('newUserPhoto', latestImages);
 
